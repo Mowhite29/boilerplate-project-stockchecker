@@ -1,4 +1,4 @@
-stockAPI = symbol => {
+async function stockAPI(symbol) {
     let url = 'https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/' + symbol + '/quote';
     fetch(url, { method: 'GET' })
         .then(response => {
@@ -9,4 +9,4 @@ stockAPI = symbol => {
         })
 }
 
-module.exports = stockAPI;
+export stockAPI;
