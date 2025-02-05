@@ -58,7 +58,7 @@ async function stockFetch(stock, likeInput, clientIp) {
             likeCount = data[0].likeCount
           }else{
             likeCount = data[0].likeCount++;
-            Symbol.updateOne({ id: data._id }, { $push: { likedIps: ipAddress}, likeCount: data.likeCount++})
+            Symbol.updateOne({ id: data._id }, { $push: { likedIps: clientIp}, likeCount: data.likeCount++})
           };
         };
       }else {
@@ -91,7 +91,33 @@ async function stockFetch(stock, likeInput, clientIp) {
       if (output.length == 1){
         return output[0]
       }else{
-        return output
+        if (output[0].likes >= output[1].likes){
+          return [
+            {
+              stock: output[0].stock,
+              price: output[0].price,
+              rel_likes: output[0].likes - output[1].likes
+            },
+            {
+              stock: output[1].stock,
+              price: output[1].price,
+              rel_likes: output[1].likes - output[0].likes
+            }
+          ]
+        }else {
+          return [
+            {
+              stock: output[0].stock,
+              price: output[0].price,
+              rel_likes: output[1].likes - output[0].likes
+            },
+            {
+              stock: output[1].stock,
+              price: output[1].price,
+              rel_likes: output[0].likes - output[1].likes
+            }
+          ]
+        }
       }
     }    
   }

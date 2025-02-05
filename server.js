@@ -11,19 +11,15 @@ const runner            = require('./test-runner');
 
 const app = express();
 
-app.use(helmet.hidePoweredBy())
-app.use(helmet.frameguard({ action: 'deny' }))
-app.use(helmet.xssFilter());
-app.use(helmet.noSniff());
-app.use(helmet.ieNoOpen());
-let ninetyDaysInSeconds = 90*24*60*60;
-app.use(helmet.hsts({maxAge: ninetyDaysInSeconds, force: true}))
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", 'trusted-cdn.com']
-  }
-}));
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://code.jquery.com/jquery-3.7.1.min.js"],
+      styleSrc: ["'self'"],
+    },
+  })
+);
 
 app.use('/public', express.static(process.cwd() + '/public'));
 

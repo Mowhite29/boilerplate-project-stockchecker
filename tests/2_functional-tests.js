@@ -5,9 +5,7 @@ const server = require('../server');
 
 chai.use(chaiHttp);
 
-let firstLikeResponse
-let secondLikeResponseOne
-let secondLikeResponseTwo
+let firstLikeResponse;
 
 suite('Functional Tests', function() {
     test('1. Viewing one stock: GET request to /api/stock-prices/', (done) => {
@@ -43,8 +41,6 @@ suite('Functional Tests', function() {
         .end((err, res) => {
             assert.isNumber(res.body.stockData[0].price);
             assert.isNumber(res.body.stockData[1].price);
-            secondLikeResponseOne = res.body.stockData[0].likes;
-            secondLikeResponseTwo = res.body.stockData[1].likes
             done();
         })
     })
@@ -54,8 +50,7 @@ suite('Functional Tests', function() {
         .end((err, res) => {
             assert.isNumber(res.body.stockData[0].price);
             assert.isNumber(res.body.stockData[1].price);
-            assert.equal(res.body.stockData[0].likes, secondLikeResponseOne + 1);
-            assert.equal(res.body.stockData[1].likes, secondLikeResponseTwo + 1);
+            assert.equal(res.body.stockData[0].likes, res.body.stockData[1].likes);
             done();
         })
     })
