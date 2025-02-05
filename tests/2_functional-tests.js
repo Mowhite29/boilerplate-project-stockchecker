@@ -10,71 +10,50 @@ let secondLikeResponseOne
 let secondLikeResponseTwo
 
 suite('Functional Tests', function() {
-    test('Viewing one stock: GET request to /api/stock-prices/', done => {
+    test('1. Viewing one stock: GET request to /api/stock-prices/', (done) => {
         chai.request(server)
-        .get('api/stock-prices/')
-        .send({
-            stock: 'GOOG'
-        })
+        .get('/api/stock-prices?stock=GOOG')
         .end((err, res) => {
-            assert.isFloat(res.body.stockData.price);
-            firstLikeResponse = res.body.likes;
+            assert.isNumber(res.body.stockData.price);
+            firstLikeResponse = parseInt(res.body.stockData.likes);
             done();
-            })
-    })
-    test('Viewing one stock and liking it: GET request to /api/stock-prices/', done => {
-        chai.request(server)
-        .get('api/stock-prices/')
-        .send({
-            stock: 'GOOG',
-            like: true
         })
+    })
+    test('2. Viewing one stock and liking it: GET request to /api/stock-prices/', (done) => {
+        chai.request(server)
+        .get('/api/stock-prices?stock=GOOG&like=true')
         .end((err, res) => {
-            assert.isFloat(res.body.stockData.price);
+            assert.isNumber(res.body.stockData.price);
+            assert.equal(res.body.stockData.likes, (firstLikeResponse + 1));
+            done();
+        })
+    })
+    test('3. Viewing the same stock and liking it again: GET request to /api/stock-prices/', done => {
+        chai.request(server)
+        .get('/api/stock-prices?stock=GOOG&like=true')
+        .end((err, res) => {
+            assert.isNumber(res.body.stockData.price);
             assert.equal(res.body.stockData.likes, firstLikeResponse + 1);
             done();
         })
     })
-    test('Viewing the same stock and liking it again: GET request to /api/stock-prices/', done => {
+    test('4. Viewing two stocks: GET request to /api/stock-prices/', done => {
         chai.request(server)
-        .get('api/stock-prices/')
-        .send({
-            stock: 'GOOG',
-            like: true
-        })
+        .get('/api/stock-prices?stock=G&stock=MSFT')
         .end((err, res) => {
-            assert.isFloat(res.body.stockData.price);
-            assert.equal(res.body.stockData.likes, firstLikeResponse + 1);
-            done();
-        })
-    })
-    test('Viewing two stocks: GET request to /api/stock-prices/', done => {
-        chai.request(server)
-        .get('api/stock-prices/')
-        .send({
-            stock: 'GOOG',
-            stock: 'MSFT',
-            like: true
-        })
-        .end((err, res) => {
-            assert.isFloat(res.body.stockData[0].price);
+            assert.isNumber(res.body.stockData[0].price);
+            assert.isNumber(res.body.stockData[1].price);
             secondLikeResponseOne = res.body.stockData[0].likes;
             secondLikeResponseTwo = res.body.stockData[1].likes
-            assert.isFloat(res.body.stockData[1].price);
             done();
         })
     })
-    test('Viewing two stocks and liking them : GET request to /api/stock-prices/', done => {
+    test('5. Viewing two stocks and liking them : GET request to /api/stock-prices/', done => {
         chai.request(server)
-        .get('api/stock-prices/')
-        .send({
-            stock: 'GOOG',
-            stock: 'MSFT',
-            like: true
-        })
+        .get('/api/stock-prices?stock=G&stock=MSFT&like=true')
         .end((err, res) => {
-            assert.isFloat(res.body.stockData[0].price);
-            assert.isFloat(res.body.stockData[1].price);
+            assert.isNumber(res.body.stockData[0].price);
+            assert.isNumber(res.body.stockData[1].price);
             assert.equal(res.body.stockData[0].likes, secondLikeResponseOne + 1);
             assert.equal(res.body.stockData[1].likes, secondLikeResponseTwo + 1);
             done();
